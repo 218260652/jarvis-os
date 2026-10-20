@@ -27,6 +27,7 @@ cp app/*.py work/config/includes.chroot/opt/jarvis/
 cd work
 lb config --mode debian --distribution trixie --architecture amd64 \
   --binary-image iso-hybrid --bootloaders 'syslinux grub-efi' \
+  --chroot-squashfs-compression-type zstd --chroot-squashfs-compression-level 5 \
   --archive-areas 'main contrib non-free non-free-firmware' \
   --apt-recommends false --apt-secure true --apt-options '-y -o Acquire::Retries=5' \
   --mirror-bootstrap https://deb.debian.org/debian/ \
