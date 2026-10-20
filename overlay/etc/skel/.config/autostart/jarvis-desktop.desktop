@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=J.A.R.V.I.S. Desktop Setup
+Exec=jarvis-desktop-setup
+OnlyShowIn=XFCE;
+Terminal=false

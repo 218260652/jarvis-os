@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=J.A.R.V.I.S. Assistant
+Exec=jarvis
+OnlyShowIn=XFCE;
+Terminal=false

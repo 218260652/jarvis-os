@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+dpkg --add-architecture i386
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends wine32:i386
+chmod 755 /usr/local/bin/jarvis /usr/local/bin/jarvis-windows /usr/local/bin/jarvis-desktop-setup
+printf 'ALGO=lz4\nPERCENT=50\n' > /etc/default/zramswap
+update-desktop-database /usr/share/applications || true

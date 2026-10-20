@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Windows App Launcher
+Comment=Run trusted EXE or MSI files using Wine
+Exec=jarvis-windows %f
+Icon=application-x-executable
+Categories=Utility;
+Terminal=false
+MimeType=application/x-ms-dos-executable;application/x-msdownload;application/x-msi;application/vnd.microsoft.portable-executable;

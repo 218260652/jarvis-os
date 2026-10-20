@@ -1,0 +1,24 @@
+#!/usr/bin/python3
+"""Apply wallpaper on actual connected monitors once per user."""
+from pathlib import Path
+import subprocess
+import time
+
+marker = Path.home() / '.config/jarvis/desktop-configured'
+if not marker.exists():
+    for attempt in range(10):
+        result = subprocess.run(['xfconf-query', '-c', 'xfce4-desktop', '-l'],
+                                capture_output=True, text=True)
+        paths = [line.strip() for line in result.stdout.splitlines()
+                 if line.strip().endswith('/last-image')]
+        if paths:
+            ok = True
+            for path in paths:
+                result = subprocess.run(['xfconf-query', '-c', 'xfce4-desktop', '-p', path,
+                    '-s', '/usr/share/backgrounds/jarvis/horizon.svg'], capture_output=True)
+                ok = ok and result.returncode == 0
+            if ok:
+                marker.parent.mkdir(parents=True, exist_ok=True)
+                marker.touch()
+            break
+        time.sleep(1)

@@ -1,0 +1,14 @@
+[Default Applications]
+x-scheme-handler/http=google-chrome.desktop;
+x-scheme-handler/https=google-chrome.desktop;
+text/html=google-chrome.desktop;
+video/mp4=vlc.desktop;
+video/x-matroska=vlc.desktop;
+video/x-msvideo=vlc.desktop;
+audio/mpeg=vlc.desktop;
+audio/flac=vlc.desktop;
+audio/ogg=vlc.desktop;
+application/x-ms-dos-executable=jarvis-windows.desktop;
+application/x-msdownload=jarvis-windows.desktop;
+application/x-msi=jarvis-windows.desktop;
+application/vnd.microsoft.portable-executable=jarvis-windows.desktop;

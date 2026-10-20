@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=J.A.R.V.I.S. Assistant
+Comment=Voice commands and optional AI conversation
+Exec=jarvis
+Icon=audio-input-microphone
+Categories=Utility;Accessibility;
+Terminal=false

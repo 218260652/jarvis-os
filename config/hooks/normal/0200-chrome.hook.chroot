@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+# Official Google repository, restricted to its own signing key and architecture.
+install -d -m 755 /etc/apt/keyrings
+curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
+  https://dl.google.com/linux/linux_signing_key.pub -o /tmp/jarvis-google-key.asc
+gpg --batch --yes --dearmor -o /etc/apt/keyrings/google-chrome.gpg /tmp/jarvis-google-key.asc
+chmod 644 /etc/apt/keyrings/google-chrome.gpg
+rm /tmp/jarvis-google-key.asc
+repo='deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] https://dl.google.com/linux/chrome/deb/ stable main'
+printf '%s\n' "$repo" > /etc/apt/sources.list.d/google-chrome.list
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends google-chrome-stable
+# Keep our scoped repository configuration after the package's setup scripts.
+printf '%s\n' "$repo" > /etc/apt/sources.list.d/google-chrome.list
+update-alternatives --set x-www-browser /usr/bin/google-chrome-stable

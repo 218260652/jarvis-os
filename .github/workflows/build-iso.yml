@@ -1,0 +1,68 @@
+name: Build J.A.R.V.I.S. development ISO
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - 'config/**'
+      - 'overlay/**'
+      - 'build.sh'
+      - '.github/workflows/build-iso.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jarvis-iso-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test core and check script syntax
+        run: |
+          python3 -m unittest discover -s tests -v
+          python3 -m compileall -q app
+          bash -n build.sh
+          for hook in config/hooks/normal/*; do sh -n "$hook"; done
+      - name: Build inside Debian 13
+        run: |
+          docker run --rm --privileged \
+            -v "$GITHUB_WORKSPACE:/project" -w /project \
+            debian:trixie bash -euc '
+              export DEBIAN_FRONTEND=noninteractive
+              apt-get update
+              apt-get install -y --no-install-recommends live-build debootstrap debian-archive-keyring xorriso squashfs-tools ca-certificates
+              chmod +x build.sh config/hooks/normal/*.hook.chroot overlay/usr/local/bin/*
+              ./build.sh
+            '
+      - name: Verify ISO checksum
+        run: |
+          cd dist
+          sha256sum -c SHA256SUMS
+      - name: Save development ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: jarvis-development-iso-UNTESTED
+          path: |
+            dist/jarvis-os-dev-amd64.iso
+            dist/SHA256SUMS
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+      - name: Save build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jarvis-build-logs
+          path: |
+            work/build.log
+            work/*.packages
+            work/*.list
+            docs/VALIDATION.md
+          retention-days: 7

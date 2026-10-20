@@ -1,0 +1,25 @@
+test_api_errors_do_not_echo_secrets (test_core.AITest.test_api_errors_do_not_echo_secrets) ... ok
+test_api_payload_and_text (test_core.AITest.test_api_payload_and_text) ... ok
+test_no_credentials_no_request (test_core.AITest.test_no_credentials_no_request) ... ok
+test_no_text_is_error (test_core.AITest.test_no_text_is_error) ... ok
+test_redirect_rejected (test_core.AITest.test_redirect_rejected) ... ok
+test_action_has_no_shell (test_core.CommandsTest.test_action_has_no_shell) ... ok
+test_confirmed_restart (test_core.CommandsTest.test_confirmed_restart) ... ok
+test_fabricated_action_is_rejected (test_core.CommandsTest.test_fabricated_action_is_rejected) ... ok
+test_injection_is_not_a_command (test_core.CommandsTest.test_injection_is_not_a_command) ... ok
+test_missing_program (test_core.CommandsTest.test_missing_program) ... ok
+test_power_requires_confirmation (test_core.CommandsTest.test_power_requires_confirmation) ... ok
+test_voice_normalization (test_core.CommandsTest.test_voice_normalization) ... ok
+test_exe_path_is_single_literal_argument (test_core.WindowsTest.test_exe_path_is_single_literal_argument) ... ok
+test_missing_file_rejected (test_core.WindowsTest.test_missing_file_rejected) ... ok
+test_msi (test_core.WindowsTest.test_msi) ... ok
+test_non_exe_and_directory_rejected (test_core.WindowsTest.test_non_exe_and_directory_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.051s
+
+OK
+
+Brand rename: J.A.R.V.I.S.
+Python compilation and build shell syntax: PASS
+ISO build and runtime tests: NOT RUN

@@ -1,0 +1,8 @@
+/* Native GTK accents: no compositor or blur required. */
+@define-color theme_selected_bg_color #176d89;
+@define-color theme_selected_fg_color #ffffff;
+window, .background { background-color: #0c1724; color: #e5edf7; }
+headerbar { background-image: none; background-color: #122338; color: #55d9ff; }
+button { border-radius: 4px; }
+button:checked, button:active { background-image: none; background-color: #176d89; }
+.xfce4-panel { background-color: #091422; color: #55d9ff; }
