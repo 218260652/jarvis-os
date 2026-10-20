@@ -3,9 +3,6 @@ on:
   workflow_run:
     workflows: ['Capture ISO boot evidence']
     types: [completed]
-  push:
-    branches: [main]
-    paths: ['.github/workflows/review-evidence.yml', 'tests/review_evidence.py']
 permissions:
   contents: write
   actions: read
@@ -68,7 +65,7 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const files = ['boot-180s.png', 'desktop-wallpaper.png', 'app-menu.png', 'runtime-report.png', 'chrome-launch.png', 'vlc-launch.png'];
+            const files = ['assistant-ready.png', 'boot-120s.png', 'desktop-wallpaper.png', 'app-menu.png', 'runtime-report.png', 'chrome-launch.png', 'vlc-launch.png'];
             const entries = [];
             for (const name of files) {
               const path = 'evidence/' + name;
@@ -81,6 +78,6 @@ jobs:
             const parent = await github.rest.git.getCommit({owner: context.repo.owner, repo: context.repo.repo, commit_sha: head.data.object.sha});
             const tree = await github.rest.git.createTree({owner: context.repo.owner, repo: context.repo.repo, base_tree: parent.data.tree.sha, tree: entries});
             const commit = await github.rest.git.createCommit({owner: context.repo.owner, repo: context.repo.repo, message: 'Preserve actual VM screenshot evidence from run ' + context.runId, tree: tree.data.sha, parents: [head.data.object.sha]});
-            const branch = 'vm-evidence-' + context.runId + '-' + context.runAttempt;
+            const branch = 'vm-evidence-' + context.runId + '-' + (process.env.GITHUB_RUN_ATTEMPT || '1');
             await github.rest.git.createRef({owner: context.repo.owner, repo: context.repo.repo, ref: 'refs/heads/' + branch, sha: commit.data.sha});
             core.info('EVIDENCE_BRANCH=' + branch);

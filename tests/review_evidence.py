@@ -34,10 +34,10 @@ clock = actual.crop((width - 115, height - 38, width - 8, height - 2))
 report['clock_bright_pixels'] = sum(min(pixel) > 170 for pixel in clock.getdata())
 report['clock_readable_color'] = report['clock_bright_pixels'] > 100
 
-assistant = ocr('boot-180s.png')
+assistant = ocr('assistant-ready.png')
 report['assistant_visible'] = any(word in assistant for word in [
     'YOURVOICEYOURDESKTOP', 'DESKTOPCOMPANION', 'RUNCOMMAND'])
-chrome = ocr('chrome-launch.png', lambda im: (0, 0, im.width, 150))
+chrome = ocr('chrome-launch.png')
 report['chrome_toolbar_visible'] = 'CHROME' in chrome
 vlc = ocr('vlc-launch.png')
 report['vlc_visible'] = any(word in vlc for word in [
