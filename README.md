@@ -4,8 +4,13 @@
 The repository and source ZIP contain editable source. A separate ISO was built
 in GitHub Actions, its checksum verified, and its Xfce desktop and J.A.R.V.I.S.
 startup observed in a Core 2 Duo / 2 GB RAM virtual machine. Native Chrome and
-VLC also opened. A visual refresh is rebuilding to correct first-run wallpaper
-and dark-panel labels. See `docs/STATUS.md`. No physical Dell test has run.
+VLC also opened. The custom wallpaper, menu and panel contrast have now been
+checked in the refreshed image. See `docs/STATUS.md`. No physical Dell test has run.
+
+**[Download the development ISO archive (about 2.85 GB)](https://github.com/218260652/jarvis-os/actions/runs/39379054676/artifacts/12244642946)**
+
+Extract the ZIP to obtain the ISO and SHA-256 file. This GitHub artifact is retained
+for seven days. Read [the quick start](docs/QUICK-START.md) before testing.
 
 ## What this project contains
 
@@ -72,7 +77,7 @@ Secure Boot is not supported by this development recipe.
 
 A cloud build workflow is prepared. See `docs/CLOUD-BUILD.md`.
 An ISO build and desktop/app startup checks succeeded after the live-user fix.
-The current visual refresh is rebuilding. See `docs/STATUS.md`.
+The visual refresh also passed rendered-output checks. See `docs/STATUS.md`.
 
 Use a **dedicated Debian 13 amd64 machine or full VM** with internet and root
 mount/chroot capabilities. Allow roughly 30 GB free disk and at least 4 GB RAM

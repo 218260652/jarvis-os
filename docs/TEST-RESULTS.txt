@@ -1,7 +1,10 @@
-20 core tests passed locally and in GitHub Actions.
-Python and shell syntax checks passed.
-ISO build 39376886815 succeeded; checksum verified.
-VM run 39377894422: Xfce, J.A.R.V.I.S., Chrome and VLC startup observed.
-Wine version and Tk version reported; no EXE execution or audio test.
-Visual refresh build 39379054676 is pending runtime verification.
-See STATUS.md and VALIDATION.md for scope and remaining gates.
+20 core tests: PASS.
+ISO build 39379054676: PASS.
+SHA-256 at build and after artifact download: PASS.
+Guest readiness run 39382379485: PASS (BIOS / Core 2 Duo emulation / 2 GB RAM).
+J.A.R.V.I.S., Chrome and VLC windows: detected and visually reviewed.
+Custom wallpaper: verified; mean RGB channel difference approximately 1.21/255.
+Dark-panel clock text: verified.
+Rendered-output review 39383639180: PASS.
+Windows app execution, real audio/voice, Dell hardware, UEFI and installation: NOT TESTED.
+See STATUS.md for evidence links and exact limitations.
