@@ -1,24 +1,34 @@
 #!/usr/bin/python3
-"""Apply wallpaper on actual connected monitors once per user."""
+"""Set the first-run backdrop, including fresh channels with no image property."""
 from pathlib import Path
 import subprocess
 import time
 
-marker = Path.home() / '.config/jarvis/desktop-configured'
+marker = Path.home() / '.config/jarvis/desktop-configured-v2'
+wallpaper = '/usr/share/backgrounds/jarvis/horizon.svg'
+
+
+def set_property(path, kind, value):
+    result = subprocess.run(['xfconf-query', '-c', 'xfce4-desktop', '-p', path,
+                             '--create', '-t', kind, '-s', value],
+                            capture_output=True, timeout=10)
+    return result.returncode == 0
+
+
 if not marker.exists():
-    for attempt in range(10):
-        result = subprocess.run(['xfconf-query', '-c', 'xfce4-desktop', '-l'],
-                                capture_output=True, text=True)
-        paths = [line.strip() for line in result.stdout.splitlines()
-                 if line.strip().endswith('/last-image')]
-        if paths:
-            ok = True
-            for path in paths:
-                result = subprocess.run(['xfconf-query', '-c', 'xfce4-desktop', '-p', path,
-                    '-s', '/usr/share/backgrounds/jarvis/horizon.svg'], capture_output=True)
-                ok = ok and result.returncode == 0
+    for attempt in range(20):
+        outputs = subprocess.run(['xrandr', '--query'], capture_output=True,
+                                 text=True, timeout=10)
+        monitors = [line.split()[0] for line in outputs.stdout.splitlines()
+                    if len(line.split()) > 1 and line.split()[1] == 'connected']
+        if monitors:
+            ok = set_property('/backdrop/single-workspace-mode', 'bool', 'true')
+            for monitor in monitors:
+                base = '/backdrop/screen0/monitor' + monitor + '/workspace0'
+                ok = set_property(base + '/image-style', 'int', '5') and ok
+                ok = set_property(base + '/last-image', 'string', wallpaper) and ok
             if ok:
                 marker.parent.mkdir(parents=True, exist_ok=True)
                 marker.touch()
-            break
+                break
         time.sleep(1)
