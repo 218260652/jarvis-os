@@ -59,6 +59,44 @@ def main():
                         im.save(ppm.with_suffix('.png'))
                     ppm.unlink()
                     print(f'Screenshot captured at {n*120} seconds', flush=True)
+                def capture(name):
+                    ppm = out / (name + '.ppm')
+                    qmp('screendump', {'filename': str(ppm)})
+                    with Image.open(ppm) as im:
+                        im.save(ppm.with_suffix('.png'))
+                    ppm.unlink()
+                def keys(*codes):
+                    qmp('send-key', {'keys': [{'type': 'qcode', 'data': c} for c in codes], 'hold-time': 30})
+                    time.sleep(0.06)
+                punctuation = {' ': ('spc',), '-': ('minus',), '/': ('slash',),
+                    '.': ('dot',), ';': ('semicolon',), "'": ('apostrophe',),
+                    '|': ('shift', 'backslash'), '>': ('shift', 'dot'),
+                    '&': ('shift', '7'), ':': ('shift', 'semicolon'),
+                    '(': ('shift', '9'), ')': ('shift', '0'),
+                    '_': ('shift', 'minus')}
+                def type_command(text):
+                    for char in text:
+                        if char in punctuation:
+                            keys(*punctuation[char])
+                        elif char.isupper():
+                            keys('shift', char.lower())
+                        else:
+                            keys(char)
+                    keys('ret')
+                # Use the logged-in live desktop, with no files or credentials supplied.
+                keys('ctrl', 'alt', 't')
+                time.sleep(8)
+                type_command("id; google-chrome-stable --version; vlc --version | head -n 1; wine --version; command -v jarvis pocketsphinx_continuous; python3 -c 'import tkinter; print(tkinter.TkVersion)'")
+                time.sleep(8)
+                capture('runtime-report')
+                type_command('google-chrome-stable --no-first-run about:blank >/tmp/chrome.log 2>&1 &')
+                time.sleep(20)
+                capture('chrome-launch')
+                keys('ctrl', 'alt', 't')
+                time.sleep(5)
+                type_command('vlc >/tmp/vlc.log 2>&1 &')
+                time.sleep(15)
+                capture('vlc-launch')
                 qmp('quit')
         finally:
             if proc.poll() is None:

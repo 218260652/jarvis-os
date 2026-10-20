@@ -1,9 +1,6 @@
 name: Capture ISO boot evidence
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths: ['.github/workflows/boot-check.yml', 'tests/capture_boot.py']
   workflow_run:
     workflows: ['Build J.A.R.V.I.S. development ISO']
     types: [completed]
