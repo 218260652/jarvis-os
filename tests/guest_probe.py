@@ -37,11 +37,11 @@ try:
         raise RuntimeError(installed.stderr)
 
     def user(args, timeout=30):
-        return run(['runuser', '-u', 'jarvis', '--', *args], env=session, timeout=timeout)
+        return run(['/usr/sbin/runuser', '-u', 'jarvis', '--', *args], env=session, timeout=timeout)
 
     def launch(args, log):
         fd = open('/tmp/' + log, 'w')
-        return subprocess.Popen(['runuser', '-u', 'jarvis', '--', *args],
+        return subprocess.Popen(['/usr/sbin/runuser', '-u', 'jarvis', '--', *args],
                                 env=session, cwd='/home/jarvis',
                                 stdin=subprocess.DEVNULL, stdout=fd, stderr=fd)
 
