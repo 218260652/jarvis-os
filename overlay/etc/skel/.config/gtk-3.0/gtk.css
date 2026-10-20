@@ -6,3 +6,5 @@ headerbar { background-image: none; background-color: #122338; color: #55d9ff; }
 button { border-radius: 4px; }
 button:checked, button:active { background-image: none; background-color: #176d89; }
 .xfce4-panel { background-color: #091422; color: #55d9ff; }
+
+.xfce4-panel label { color: #e5edf7; }
