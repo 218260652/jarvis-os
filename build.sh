@@ -28,7 +28,7 @@ cd work
 lb config --mode debian --distribution trixie --architecture amd64 \
   --binary-image iso-hybrid --bootloaders 'syslinux grub-efi' \
   --archive-areas 'main contrib non-free non-free-firmware' \
-  --apt-recommends false --apt-secure true \
+  --apt-recommends false --apt-secure true --apt-options '-y -o Acquire::Retries=5' \
   --mirror-bootstrap https://deb.debian.org/debian/ \
   --mirror-chroot https://deb.debian.org/debian/ \
   --mirror-chroot-security https://security.debian.org/debian-security/ \

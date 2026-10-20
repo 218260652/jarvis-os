@@ -11,6 +11,10 @@ on:
       - 'build.sh'
       - '.github/workflows/build-iso.yml'
 
+defaults:
+  run:
+    shell: bash
+
 permissions:
   contents: read
 
@@ -36,8 +40,8 @@ jobs:
             -v "$GITHUB_WORKSPACE:/project" -w /project \
             debian:trixie bash -euc '
               export DEBIAN_FRONTEND=noninteractive
-              apt-get update
-              apt-get install -y --no-install-recommends live-build debootstrap debian-archive-keyring xorriso squashfs-tools ca-certificates
+              apt-get -o Acquire::Retries=5 update
+              apt-get -o Acquire::Retries=5 install -y --no-install-recommends live-build debootstrap debian-archive-keyring xorriso squashfs-tools ca-certificates
               chmod +x build.sh config/hooks/normal/*.hook.chroot overlay/usr/local/bin/*
               ./build.sh
             ' 2>&1 | tee github-build.log
