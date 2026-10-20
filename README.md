@@ -1,11 +1,11 @@
 # J.A.R.V.I.S. OS — development source, v0.1
 
 **Development build — validation in progress.**
-The repository and source ZIP contain editable source, not an ISO. An ISO was
-built in GitHub Actions and its checksum was verified. The first real VM boot
-reached LightDM but could not start a user session because `user-setup` was missing.
-That package is now included and a corrected build is running.
-See `docs/STATUS.md` for build links and current evidence. No physical Dell test has run.
+The repository and source ZIP contain editable source. A separate ISO was built
+in GitHub Actions, its checksum verified, and its Xfce desktop and J.A.R.V.I.S.
+startup observed in a Core 2 Duo / 2 GB RAM virtual machine. Native Chrome and
+VLC also opened. A visual refresh is rebuilding to correct first-run wallpaper
+and dark-panel labels. See `docs/STATUS.md`. No physical Dell test has run.
 
 ## What this project contains
 
@@ -26,7 +26,8 @@ Browser and common audio/video file associations are configured for Chrome and V
 J.A.R.V.I.S. recognises `open chrome`, `open browser`, `open vlc` and `open media player`.
 On 2 GB RAM, keep browser tabs and simultaneous apps to a minimum; performance
 is unmeasured. The successful build manifest confirms these packages are installed;
-graphical launch and media/voice behaviour still require runtime checks.
+native Chrome and VLC launch were observed in the VM. Media playback, internet
+browsing, real microphone capture and voice accuracy remain unverified.
 
 The recipe includes Wine with 64-bit and 32-bit libraries. The Windows launcher
 accepts EXE and MSI files, asks before launch, and writes a diagnostic log.
@@ -70,8 +71,8 @@ Secure Boot is not supported by this development recipe.
 ## Build the ISO on a suitable machine
 
 A cloud build workflow is prepared. See `docs/CLOUD-BUILD.md`.
-An ISO build succeeded; a boot test exposed a missing live-user setup package.
-The corrected build and desktop checks are in progress. See `docs/STATUS.md`.
+An ISO build and desktop/app startup checks succeeded after the live-user fix.
+The current visual refresh is rebuilding. See `docs/STATUS.md`.
 
 Use a **dedicated Debian 13 amd64 machine or full VM** with internet and root
 mount/chroot capabilities. Allow roughly 30 GB free disk and at least 4 GB RAM
