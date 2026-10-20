@@ -18,6 +18,7 @@ if [[ -e work ]]; then
   echo 'For a fresh build, extract the source into a new directory.' >&2
   exit 1
 fi
+chmod +x config/hooks/normal/*.hook.chroot overlay/usr/local/bin/*
 mkdir work
 cp -a config work/config
 mkdir -p work/config/includes.chroot/opt/jarvis

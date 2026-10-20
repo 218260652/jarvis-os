@@ -38,7 +38,7 @@ Wine is not a malware sandbox. This project does not contain Windows.
 - Push-to-talk: click Listen, speak for up to six seconds, wait for recognition.
 - Recognised allowlisted desktop commands run locally. Power and lock commands
   require on-screen confirmation. Unknown speech is shown for editing.
-- Offline English speech recognition through PocketSphinx and spoken replies through eSpeak NG.
+- Offline English speech recognition through the Debian `pocketsphinx` command and spoken replies through eSpeak NG.
   This is basic speech recognition and a synthetic voice, not a movie-quality voice.
 - Optional OpenAI Responses API chat: explicitly press Ask AI to send that message.
   It does not have general computer-control tools and cannot see your screen.
@@ -48,7 +48,8 @@ Wine is not a malware sandbox. This project does not contain Windows.
   wake-word service, browsing agent, or unrestricted control of other apps.
 
 Type `help` for all commands. Examples: `open files`, `open browser`,
-`open windows app`, `volume up`, `mute`, `open settings`, `restart computer`.
+`open windows app`, `volume up`, `brightness up`, `system status`, `mute`,
+`open settings`, `restart computer`.
 You can also say `J.A.R.V.I.S., open files`.
 
 ## Hardware target and limits
@@ -66,8 +67,9 @@ Secure Boot is not supported by this development recipe.
 
 ## Build the ISO on a suitable machine
 
-A cloud build workflow is also prepared. See `docs/CLOUD-BUILD.md` to run it in
-a dedicated GitHub repository. It has not been executed or boot-tested.
+A cloud build workflow is prepared. See `docs/CLOUD-BUILD.md`.
+Runs on main have executed and failed during package installation; see `docs/STATUS.md`.
+No ISO has been boot-tested.
 
 Use a **dedicated Debian 13 amd64 machine or full VM** with internet and root
 mount/chroot capabilities. Allow roughly 30 GB free disk and at least 4 GB RAM
@@ -123,7 +125,7 @@ Keep API keys and personal work out of shared live sessions.
 This does not install an operating system or theme. In the extracted directory:
 
 ```sh
-sudo apt install python3-tk python3-pocketsphinx pocketsphinx-en-us espeak-ng alsa-utils
+sudo apt install python3-tk pocketsphinx pocketsphinx-en-us espeak-ng alsa-utils brightnessctl
 python3 app/jarvis.py
 ```
 
