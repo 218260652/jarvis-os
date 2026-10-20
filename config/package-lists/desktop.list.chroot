@@ -2,6 +2,10 @@ linux-image-amd64
 live-boot
 live-config
 live-config-systemd
+user-setup
+keyboard-configuration
+live-tools
+iproute2
 systemd-sysv
 sudo
 locales
