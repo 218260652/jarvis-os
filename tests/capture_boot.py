@@ -83,9 +83,18 @@ def main():
                         else:
                             keys(char)
                     keys('ret')
+                # Capture the home screen and menu as well as the assistant window.
+                keys('alt', 'f9')
+                time.sleep(2)
+                capture('desktop-wallpaper')
                 # Use the logged-in live desktop, with no files or credentials supplied.
                 keys('ctrl', 'alt', 't')
                 time.sleep(8)
+                type_command('xfce4-popup-whiskermenu')
+                time.sleep(3)
+                capture('app-menu')
+                keys('esc')
+                time.sleep(2)
                 type_command("id; google-chrome-stable --version; vlc --version | head -n 1; wine --version; command -v jarvis pocketsphinx_continuous; python3 -c 'import tkinter; print(tkinter.TkVersion)'")
                 time.sleep(8)
                 capture('runtime-report')
