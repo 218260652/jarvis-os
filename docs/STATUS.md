@@ -1,22 +1,37 @@
-# Current status
+# Development status — 20 October 2026
 
-Version: 0.1 development source, 20 October 2026.
+## Build evidence
 
-## Foundation
+- ISO built successfully: [run 39359354095](https://github.com/218260652/jarvis-os/actions/runs/39359354095).
+- SHA-256 verified during build and after artifact download.
+- Package manifest includes Google Chrome Stable 155.0.8059.84-1, VLC 3.0.24,
+  Wine 10 with wine32:i386, Tk, PocketSphinx and eSpeak NG.
+- 20 core tests pass. No API credentials are included.
 
-Debian 13 (trixie) with a trimmed Xfce desktop stays the base. antiX would use less RAM, but it would throw away the live-build recipe, GitHub Actions path and package set already in this repository. MX Linux is also Debian-based and is not lighter than this trimmed Xfce image. The Dell Latitude E6400 is a BIOS, x86-64 machine with 2 GB RAM, so the image keeps syslinux BIOS boot, disables compositing, and uses zram. This choice is not a measured performance result.
+## Runtime problem found and corrected in source
 
-## Build failure that was reproduced
+[VM run 39374733030](https://github.com/218260652/jarvis-os/actions/runs/39374733030)
+passed the boot menu and reached LightDM. It did not reach the desktop.
+`user-setup` was absent because recommended packages are disabled in the minimal
+build. Debian live-config skips account creation without that package.
+The source now includes user-setup, keyboard-configuration, live-tools and iproute2,
+and explicitly selects Xfce as the LightDM session.
 
-GitHub Actions run 39357044465 on main failed in about one minute, before any ISO existed. The chroot package install stopped with:
+[Corrected build 39375673592](https://github.com/218260652/jarvis-os/actions/runs/39375673592)
+is in progress. The boot workflow will capture desktop progress, app versions,
+and attempted native Chrome/VLC launches using Core 2 Duo emulation and 2 GB RAM.
+A completed screenshot workflow alone is not a pass: inspect its actual images.
 
-- `E: Package 'policykit-1' has no installation candidate` (Debian 13 ships `polkitd` and `pkexec` instead)
-- `E: Unable to locate package python3-pocketsphinx` (the Python binding is not in trixie; the `pocketsphinx` command and `pocketsphinx-en-us` model are)
+## Build reliability fixes
 
-Those two names were checked against the trixie amd64 and i386 package indexes. The replacement names in `config/package-lists/desktop.list.chroot` are present. Offline recognition now calls `pocketsphinx_continuous` instead of the missing Python module. `build.sh` marks live-build hooks executable before copying them.
+Debian 13 package names were corrected in PR #2, now merged. A later transient
+Debian package download failure prompted APT retries. Bash pipefail is enabled
+so logging cannot conceal a failed build. Superseded builds are cancelled.
 
-## Not completed
+## Remaining release gates
 
-No ISO has been produced or booted yet. Do not install this on the laptop until a GitHub Actions artifact exists, its checksum is verified, and a virtual machine has been booted. Chrome, VLC, Wine and voice capture remain untested at runtime. Wine is not a promise that every Windows program works.
-
-Unit tests cover command boundaries, confirmation gates, status reports and PocketSphinx output parsing. They do not prove the ISO boots.
+Desktop and J.A.R.V.I.S. startup in the corrected ISO, Chrome/VLC launch, real
+microphone and audio, specific Windows applications, installation/reboot, UEFI
+boot, and physical Dell networking/suspend/performance remain unverified.
+The optional AI connection needs a user-provided API key and an available model.
+Do not replace the existing OS before testing the live USB and backing up files.

@@ -1,10 +1,11 @@
 # J.A.R.V.I.S. OS — development source, v0.1
 
-**This ZIP is source code, not an ISO and not a finished operating system.**
-The source was written and its core unit tests were run in a restricted environment.
-The environment does not allow mount/chroot operations or package installation.
-No bootable image was built, no VM was booted, and no Dell hardware was tested.
-Do not erase Windows based on this package.
+**Development build — validation in progress.**
+The repository and source ZIP contain editable source, not an ISO. An ISO was
+built in GitHub Actions and its checksum was verified. The first real VM boot
+reached LightDM but could not start a user session because `user-setup` was missing.
+That package is now included and a corrected build is running.
+See `docs/STATUS.md` for build links and current evidence. No physical Dell test has run.
 
 ## What this project contains
 
@@ -24,7 +25,8 @@ its proprietary binaries are not in this source ZIP. Firefox ESR remains a fallb
 Browser and common audio/video file associations are configured for Chrome and VLC.
 J.A.R.V.I.S. recognises `open chrome`, `open browser`, `open vlc` and `open media player`.
 On 2 GB RAM, keep browser tabs and simultaneous apps to a minimum; performance
-is unmeasured. These applications have not been installed or runtime-tested here.
+is unmeasured. The successful build manifest confirms these packages are installed;
+graphical launch and media/voice behaviour still require runtime checks.
 
 The recipe includes Wine with 64-bit and 32-bit libraries. The Windows launcher
 accepts EXE and MSI files, asks before launch, and writes a diagnostic log.
@@ -68,8 +70,8 @@ Secure Boot is not supported by this development recipe.
 ## Build the ISO on a suitable machine
 
 A cloud build workflow is prepared. See `docs/CLOUD-BUILD.md`.
-Runs on main have executed and failed during package installation; see `docs/STATUS.md`.
-No ISO has been boot-tested.
+An ISO build succeeded; a boot test exposed a missing live-user setup package.
+The corrected build and desktop checks are in progress. See `docs/STATUS.md`.
 
 Use a **dedicated Debian 13 amd64 machine or full VM** with internet and root
 mount/chroot capabilities. Allow roughly 30 GB free disk and at least 4 GB RAM
