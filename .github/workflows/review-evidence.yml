@@ -1,5 +1,8 @@
 name: Review rendered OS evidence
 on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/review-evidence.yml', 'tests/review_evidence.py']
   workflow_run:
     workflows: ['Capture ISO boot evidence']
     types: [completed]

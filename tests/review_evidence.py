@@ -38,15 +38,18 @@ assistant = ocr('assistant-ready.png')
 report['assistant_visible'] = any(word in assistant for word in [
     'YOURVOICEYOURDESKTOP', 'DESKTOPCOMPANION', 'RUNCOMMAND'])
 chrome = ocr('chrome-launch.png')
-report['chrome_toolbar_visible'] = 'CHROME' in chrome
+serial_text = (root / 'serial.log').read_text(errors='replace')
+report['chrome_toolbar_visible'] = 'ABOUTBLANK' in chrome and 'CHROME_WINDOW=about:blank - Google Chrome' in serial_text
 vlc = ocr('vlc-launch.png')
 report['vlc_visible'] = any(word in vlc for word in [
     'VLCMEDIAPLAYER', 'PRIVACYANDNETWORKACCESSPOLICY'])
 ocr('app-menu.png')
-ocr('runtime-report.png')
+if (root / 'runtime-report.png').exists():
+    ocr('runtime-report.png')
+report['guest_windows_confirmed'] = 'PROBE_RESULT=' in serial_text and '"assistant_window": true' in serial_text and '"chrome_window": true' in serial_text and '"vlc_window": true' in serial_text
 Path('rendered-review.json').write_text(json.dumps(report, indent=2))
 print('RENDERED_REVIEW=' + json.dumps(report), flush=True)
 required = ['wallpaper_matches', 'clock_readable_color', 'assistant_visible',
-            'chrome_toolbar_visible', 'vlc_visible']
+            'chrome_toolbar_visible', 'vlc_visible', 'guest_windows_confirmed']
 if not all(report[key] for key in required):
     raise SystemExit('Rendered evidence needs inspection: ' + str(report))
