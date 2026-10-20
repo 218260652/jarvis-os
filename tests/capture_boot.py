@@ -48,6 +48,9 @@ def main():
                         if 'return' in reply:
                             return reply['return']
                 qmp('qmp_capabilities')
+                # The live ISO menu waits for input; explicitly select Live system.
+                time.sleep(20)
+                qmp('send-key', {'keys': [{'type': 'qcode', 'data': 'ret'}]})
                 for n in range(1, 4):
                     time.sleep(120)
                     ppm = out / f'boot-{n*120}s.ppm'
