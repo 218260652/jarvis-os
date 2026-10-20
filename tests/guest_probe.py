@@ -29,6 +29,8 @@ try:
     if not session or not session.get('DISPLAY'):
         raise RuntimeError('Xfce session not ready')
     print('SESSION_DISPLAY=' + session['DISPLAY'], flush=True)
+    print('FIRMWARE_MODE=' + ('uefi' if Path('/sys/firmware/efi').exists() else 'bios'), flush=True)
+    print('MEMORY_BEFORE_APPS:\n' + Path('/proc/meminfo').read_text(), flush=True)
     env = dict(os.environ, DEBIAN_FRONTEND='noninteractive')
     installed = run(['apt-get', '-qq', '-o', 'Acquire::Retries=3', 'install', '-y',
                      '--no-install-recommends', 'xdotool'], env=env, timeout=180)
@@ -95,6 +97,7 @@ try:
     for args in [['id'], ['google-chrome-stable', '--version'], ['vlc', '--version'], ['wine', '--version']]:
         r = user(args)
         print('VERSION ' + repr(args) + '\n' + r.stdout[:2000] + r.stderr[:500], flush=True)
+    print('MEMORY_WITH_APPS:\n' + Path('/proc/meminfo').read_text(), flush=True)
     print('PROBE_RESULT=' + json.dumps({'assistant_window': bool(assistant),
           'chrome_window': bool(chrome_window), 'vlc_window': bool(vlc_window)}), flush=True)
     print('PROBE_COMPLETE', flush=True)
