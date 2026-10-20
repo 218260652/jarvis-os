@@ -2,7 +2,6 @@
 from dataclasses import dataclass
 from pathlib import Path
 import json
-import os
 import re
 import shutil
 import subprocess
@@ -34,16 +33,28 @@ COMMANDS = {
     'volume down': Action('Decrease volume', ('pactl', 'set-sink-volume', '@DEFAULT_SINK@', '-5%')),
     'mute': Action('Mute audio', ('pactl', 'set-sink-mute', '@DEFAULT_SINK@', '1')),
     'unmute': Action('Unmute audio', ('pactl', 'set-sink-mute', '@DEFAULT_SINK@', '0')),
+    'brightness up': Action('Increase brightness', ('brightnessctl', 'set', '10%+')),
+    'brightness down': Action('Decrease brightness', ('brightnessctl', 'set', '10%-')),
     'lock screen': Action('Lock screen', ('xflock4',), True),
     'restart computer': Action('Restart computer', ('systemctl', 'reboot'), True),
     'shut down computer': Action('Shut down computer', ('systemctl', 'poweroff'), True),
 }
 
+REPORTS = ('system status', 'cpu status', 'memory status', 'battery status')
+
+
+def normalize(text):
+    normalized = ' '.join(text.lower().replace('j.a.r.v.i.s.', 'jarvis').strip().rstrip('.!?').split())
+    return re.sub(r'^(?:hey )?jarvis[, ]+', '', normalized)
+
 
 def parse_command(text):
-    normalized = ' '.join(text.lower().replace('j.a.r.v.i.s.', 'jarvis').strip().rstrip('.!?').split())
-    normalized = re.sub(r'^(?:hey )?jarvis[, ]+', '', normalized)
-    return COMMANDS.get(normalized)
+    return COMMANDS.get(normalize(text))
+
+
+def report_name(text):
+    name = normalize(text)
+    return name if name in REPORTS else None
 
 
 def execute(action, approved=False):
@@ -56,6 +67,57 @@ def execute(action, approved=False):
     # No shell, eval, sudo, or command interpolation.
     return subprocess.Popen(list(action.argv), stdin=subprocess.DEVNULL,
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def _meminfo():
+    info = {}
+    try:
+        for line in Path('/proc/meminfo').read_text().splitlines():
+            key, _, rest = line.partition(':')
+            info[key] = int(rest.strip().split()[0])
+    except (OSError, ValueError, IndexError):
+        return None
+    return info
+
+
+def _battery_report():
+    root = Path('/sys/class/power_supply')
+    try:
+        supplies = [path for path in root.iterdir() if path.name.lower().startswith(('bat', 'battery'))]
+    except OSError:
+        supplies = []
+    for supply in supplies:
+        try:
+            capacity = (supply / 'capacity').read_text().strip()
+            status = (supply / 'status').read_text().strip().lower()
+            int(capacity)
+        except (OSError, ValueError):
+            continue
+        return f'Battery is {capacity} percent and {status}.'
+    return 'Battery information is unavailable.'
+
+
+def system_report(name):
+    if name not in REPORTS:
+        raise ValueError('Unsupported report')
+    parts = []
+    if name in {'system status', 'cpu status'}:
+        try:
+            load = Path('/proc/loadavg').read_text().split()[0]
+            parts.append(f'CPU load average is {load}.')
+        except (OSError, IndexError):
+            parts.append('CPU information is unavailable.')
+    if name in {'system status', 'memory status'}:
+        info = _meminfo()
+        if info and 'MemTotal' in info and 'MemAvailable' in info:
+            total = info['MemTotal'] / 1024
+            used = max(0, total - (info['MemAvailable'] / 1024))
+            parts.append(f'Memory used is {used:.0f} MB of {total:.0f} MB.')
+        else:
+            parts.append('Memory information is unavailable.')
+    if name in {'system status', 'battery status'}:
+        parts.append(_battery_report())
+    return ' '.join(parts)
 
 
 def extract_response(data):

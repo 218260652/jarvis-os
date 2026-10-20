@@ -26,7 +26,9 @@ thunar-volman
 tumbler
 gvfs
 udisks2
-policykit-1
+polkitd
+pkexec
+mate-polkit
 network-manager
 network-manager-gnome
 wpasupplicant
@@ -38,9 +40,10 @@ pulseaudio
 pulseaudio-utils
 pavucontrol
 alsa-utils
+brightnessctl
 python3
 python3-tk
-python3-pocketsphinx
+pocketsphinx
 pocketsphinx-en-us
 espeak-ng
 wine

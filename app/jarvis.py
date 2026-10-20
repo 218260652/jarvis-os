@@ -6,7 +6,7 @@ import queue
 import threading
 import tkinter as tk
 from tkinter import messagebox
-from core import COMMANDS, parse_command, execute, ask_ai
+from core import COMMANDS, REPORTS, parse_command, report_name, system_report, execute, ask_ai
 from voice import listen, speak
 
 BG, PANEL, GOLD, CYAN, TEXT = '#070d16', '#101d2c', '#ffbf48', '#55d9ff', '#e5edf7'
@@ -41,6 +41,7 @@ class Jarvis(tk.Tk):
         self.button(row, 'Files', lambda: self.local('open files')).pack(side='left', padx=3)
         self.button(row, 'Browser', lambda: self.local('open browser')).pack(side='left', padx=3)
         self.button(row, 'Windows apps', lambda: self.local('open windows app')).pack(side='left', padx=3)
+        self.button(row, 'Status', lambda: self.local('system status')).pack(side='left', padx=3)
         self.button(row, 'AI Connection', self.connection).pack(side='left', padx=3)
         self.history = tk.Text(self, height=9, wrap='word', bg=PANEL, fg=TEXT,
                                relief='flat', padx=14, pady=12, font=('DejaVu Sans', 10))
@@ -115,7 +116,12 @@ class Jarvis(tk.Tk):
         self.add('You', text)
         self.entry.delete(0, 'end')
         if text.lower().strip() == 'help':
-            self.reply('Commands: ' + ', '.join(COMMANDS))
+            names = list(COMMANDS) + list(REPORTS)
+            self.reply('Commands: ' + ', '.join(names))
+            return
+        report = report_name(text)
+        if report:
+            self.reply(system_report(report))
             return
         action = parse_command(text)
         if not action:
@@ -181,7 +187,7 @@ class Jarvis(tk.Tk):
                 self.entry.delete(0, 'end')
                 self.entry.insert(0, text)
                 self.add('Heard', text)
-                if parse_command(text):
+                if parse_command(text) or report_name(text):
                     # The allowlist applies to voice too; power actions still need a click.
                     self.local(text)
                 else:
