@@ -52,13 +52,13 @@ def main():
                 time.sleep(20)
                 qmp('send-key', {'keys': [{'type': 'qcode', 'data': 'ret'}]})
                 for n in range(1, 4):
-                    time.sleep(120)
-                    ppm = out / f'boot-{n*120}s.ppm'
+                    time.sleep(60)
+                    ppm = out / f'boot-{n*60}s.ppm'
                     qmp('screendump', {'filename': str(ppm)})
                     with Image.open(ppm) as im:
                         im.save(ppm.with_suffix('.png'))
                     ppm.unlink()
-                    print(f'Screenshot captured at {n*120} seconds', flush=True)
+                    print(f'Screenshot captured at {n*60} seconds', flush=True)
                 def capture(name):
                     ppm = out / (name + '.ppm')
                     qmp('screendump', {'filename': str(ppm)})
