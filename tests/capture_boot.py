@@ -2,6 +2,7 @@
 import functools
 import http.server
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -15,12 +16,13 @@ from PIL import Image
 
 def main():
     iso = Path(sys.argv[1]).resolve(strict=True)
+    uefi = os.environ.get('JARVIS_BOOT_MODE', 'bios') == 'uefi'
     out = Path('boot-evidence').resolve()
     out.mkdir(exist_ok=True)
     sock = out / 'qmp.sock'
     serial_path = out / 'serial.log'
     (out / 'README.txt').write_text(
-        'Legacy BIOS, Core 2 Duo emulation, 2 GB RAM. No writable hard disk.\n'
+        ('UEFI' if uefi else 'Legacy BIOS') + ', Core 2 Duo emulation, 2 GB RAM. No writable hard disk.\n'
         'A diagnostic helper is injected into this disposable VM through its normal\n'
         'live-user console. xdotool is installed for test automation only.\n'
         'No AI key, personal files or account sign-in are supplied.\n')
@@ -33,6 +35,12 @@ def main():
                    '-boot', 'd', '-cdrom', str(iso), '-display', 'none', '-nic', 'user',
                    '-serial', 'file:' + str(serial_path), '-qmp',
                    f'unix:{sock},server=on,wait=off', '-no-reboot']
+        if uefi:
+            code = Path('/usr/share/OVMF/OVMF_CODE_4M.fd')
+            variables = Path(directory) / 'OVMF_VARS.fd'
+            shutil.copy('/usr/share/OVMF/OVMF_VARS_4M.fd', variables)
+            command += ['-drive', f'if=pflash,format=raw,readonly=on,file={code}',
+                        '-drive', f'if=pflash,format=raw,file={variables}']
         with (out / 'qemu.log').open('w') as log:
             proc = subprocess.Popen(command, stdout=log, stderr=log)
             try:
@@ -143,6 +151,8 @@ def main():
                     if not complete:
                         capture('probe-timeout')
                         raise RuntimeError('Guest diagnostic timeout')
+                    if uefi and 'FIRMWARE_MODE=uefi' not in serial_path.read_text(errors='replace'):
+                        raise RuntimeError('Guest did not confirm UEFI boot')
                     qmp('quit')
             finally:
                 if proc.poll() is None:
