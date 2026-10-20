@@ -1,0 +1,36 @@
+name: Capture ISO boot evidence
+on:
+  workflow_run:
+    workflows: ['Build J.A.R.V.I.S. development ISO']
+    types: [completed]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  boot:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: jarvis-development-iso-UNTESTED
+          path: dist
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify downloaded image
+        run: cd dist && sha256sum -c SHA256SUMS
+      - name: Install VM tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-system-x86 python3-pil
+      - name: Capture legacy BIOS boot at 2 GB RAM
+        run: /usr/bin/python3 tests/capture_boot.py dist/jarvis-os-dev-amd64.iso
+      - name: Save evidence for visual review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jarvis-boot-evidence-NEEDS-REVIEW
+          path: boot-evidence/
+          retention-days: 7
