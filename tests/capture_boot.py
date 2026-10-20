@@ -13,15 +13,15 @@ def main():
     out = Path('boot-evidence').resolve()
     out.mkdir(exist_ok=True)
     sock = out / 'qmp.sock'
-    command = ['qemu-system-x86_64', '-m', '2048', '-smp', '2', '-boot', 'd',
+    command = ['qemu-system-x86_64', '-m', '2048', '-smp', '2', '-cpu', 'core2duo', '-boot', 'd',
                '-cdrom', str(iso), '-display', 'none', '-nic', 'user',
                '-serial', 'file:' + str(out / 'serial.log'),
                '-qmp', f'unix:{sock},server=on,wait=off', '-no-reboot']
     (out / 'README.txt').write_text(
-        'Legacy BIOS / 2 GB RAM / QEMU software emulation.\n'
+        'Legacy BIOS / Core 2 Duo emulation / 2 GB RAM / QEMU software emulation.\n'
         'No writable hard disk is attached.\n'
         'Screenshots need human review. Successful capture is NOT a boot-test pass.\n'
-        'No audio, Windows app, installer, hardware or AI test is performed here.\n')
+        'App versions and Chrome/VLC launch screenshots are attempted. No audio, Windows app, installer, physical hardware or AI test is performed here.\n')
     with (out / 'qemu.log').open('w') as log:
         proc = subprocess.Popen(command, stdout=log, stderr=log)
         try:
