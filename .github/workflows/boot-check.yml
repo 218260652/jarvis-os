@@ -1,12 +1,18 @@
 name: Capture ISO boot evidence
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/boot-check.yml']
   workflow_run:
     workflows: ['Build J.A.R.V.I.S. development ISO']
     types: [completed]
 permissions:
   contents: read
   actions: read
+concurrency:
+  group: jarvis-boot-preview
+  cancel-in-progress: true
 jobs:
   boot:
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
@@ -29,12 +35,22 @@ jobs:
             }
             if (!runId) throw new Error('No successful ISO build exists');
             core.setOutput('run-id', String(runId));
-      - uses: actions/download-artifact@v4
-        with:
-          name: jarvis-development-iso-UNTESTED
-          path: dist
-          run-id: ${{ steps.source.outputs.run-id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({owner: context.repo.owner, repo: context.repo.repo, run_id: runId});
+            const artifact = artifacts.data.artifacts.find(a => a.name === 'jarvis-development-iso-UNTESTED');
+            if (!artifact) throw new Error('ISO artifact missing');
+            core.setOutput('artifact-id', String(artifact.id));
+      - name: Download ISO archive directly with retries
+        timeout-minutes: 12
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ARTIFACT_ID: ${{ steps.source.outputs.artifact-id }}
+        run: |
+          mkdir -p dist
+          curl --fail --location --retry 5 --retry-all-errors --retry-delay 2 --connect-timeout 30 --max-time 600 \
+            -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" -o iso-artifact.zip
+          unzip -q iso-artifact.zip -d dist
+          rm iso-artifact.zip
       - name: Verify downloaded image
         run: cd dist && sha256sum -c SHA256SUMS
       - name: Install VM tools
